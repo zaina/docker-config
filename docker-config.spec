@@ -42,3 +42,5 @@ sed -i 's/'\''/"/g; /--bip=\|-b=/! s/%{_keyword}=\("[^ "]*\)/%{_keyword}=\1 --bi
 
 
 %changelog
+* Mon Feb 22 2016 Zaina Afoulki <zaina@redhat.com> 1.0
+- Initial packaging attempt
