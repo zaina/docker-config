@@ -1,0 +1,30 @@
+---
+- hosts: localhost
+  connection: local
+  sudo: yes
+  vars:
+    docker-config_version: 1.0.0
+    version: "{{ release | regex_replace( '[A-Za-z]*', '' ) }}"
+  remote_user: jenkins
+  tasks:
+  - name: ensure rpmdevtools is installed
+    yum: name=rpmdevtools state=latest
+
+  - name: ensure yum-utils is installed
+    yum: name=yum-utils state=latest
+
+  - name: Install mock
+    yum: name=mock state=latest
+
+  - name: Install mock-scm
+    yum: name=mock-scm state=latest
+
+  - name : Ensure current user is in the mock group
+    user: name=jenkins groups=mock append=yes
+
+  - name: Run mock build
+    shell: "mock -r /etc/mock/epel-{{ version }}-x86_64.cfg --buildsrpm \
+            --sources {{ ansible_env.PWD }} \
+            --spec {{ ansible_env.PWD }}/../docker-config.spec"
+    async: 900 # Wait up to 30 minutes
+    poll: 2
